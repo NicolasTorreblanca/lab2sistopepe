@@ -96,41 +96,17 @@ int main(int argc, char ** argv){
 
     //Estos arreglos se rellenan con la lectura del archivo de entrada
     lecturaPos(arregloPos, nombreEntrada, cantidadParticulas);
-    //printf("PRIMER CP\n");
+
     lecturaEn(arregloEn, nombreEntrada, cantidadParticulas);
-    //printf("SEGUNDO CP\n");
-
-    //------ PROBLEMAS QUE RESOLVER ------
-    //cantidadProcesos = cantidad de procesos hijos que se deben generar
-
-    //  CANTIDAD DE PARTICULAS POR PROCESO HIJO
-    // particulaPorProceso = cantidadParticulas/cantidadProcesos
-    
-    //  GENERAR PROCESOS HIJOS (fork)
-
-    //  PIPES BIDIRECCIONALES
-    // - PADRE ESCRIBE, HIJO LEE - 
-    //      PROCESO HIJO CALCULA IMPACTO
-    // - HIJO ESCRIBE, PADRE LEE -
-
-    //  CANTIDAD DE PARTICULAS POR PROCESO HIJO
-    // particulaPorProceso = cantidadParticulas/cantidadProcesos
-
-    //------ ORDEN ------
-    // 1 HIJOS RECIBEN PARAMETROS POR PIPES
-    // 2 HIJOS CALCULAN PARCIALMENTE ACUMULACION DE ENERGIA
-    // 3 HIJO ESCRIBE RESULTADO DE CALCULO A PADRE MEDIANTE PIPES
-    // 4 PADRE LEE TODOS LOS RESULTADOS DE HIJOS
-    // 5 PADRE SUMA TODOS LOS RESULTADOS
 
 
     //Ejecucion de la funcion bombardeo
     bombardeo(arregloCeldas, arregloPos, arregloEn, cantidadCeldas, cantidadParticulas, nombreSalida);
-    //printf("TERCER CP\n");
+
   
     //Se calculo la celda con mayor energia
     int posMax = maximoPos(arregloCeldas, cantidadCeldas);
-    //printf("CUARTO CP\n");
+
 
     //Se utiliza la funcion niceprint si la bandera -D es utilizada en el comando de ejecucion
     if(bandera == 1){

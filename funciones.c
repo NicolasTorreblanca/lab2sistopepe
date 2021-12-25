@@ -8,6 +8,74 @@
 
 //----DEFINICION DE FUNCIONES----
 
+int calcular_N(int particulas,int procesos){
+
+  int n;
+
+  if(particulas % procesos == 0){
+    n = particulas / procesos;
+  }
+
+  else{    
+    int j = particulas % procesos;
+    int particulas_corregidas = particulas - j;
+    n = particulas_corregidas / procesos;
+  }
+  return n;
+}
+
+int avance(int* arreglo,int posicion_final){
+  
+  int avanzado = 0;
+
+  for(int i = 0; i<posicion_final;i++){
+    avanzado = avanzado + arreglo[i];
+  }
+  return avanzado;
+}
+
+int* actualizar(int* arreglo,int n){
+
+  int * actualizado = (int*)malloc(n*sizeof(int));
+
+  for(int i = 0;i<n;i++){
+    actualizado[i] = arreglo[i] + 1;
+  }
+  free(arreglo);
+  return actualizado;
+}
+
+void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particulas){
+
+  if(particulas % procesos == 0){
+
+      n = particulas / procesos;
+      for(int i = 0; i<n ; i++){
+        arreglo_particulas[i] = procesos;    
+    }
+  }
+
+  else{
+    int j = particulas % procesos;
+    int particulas_corregidas = particulas - j;
+
+    for(int i =0; i<n ; i++){
+      arreglo_particulas[i] = procesos;
+    }
+    for(int k =0 ;k<j;k++){
+      while(j>n){
+        for(int i = 0; i<n ; i++){
+          arreglo_particulas[i] = arreglo_particulas[i] + 1; 
+        }
+        j = j-n;        
+      }
+      arreglo_particulas[k] = arreglo_particulas[k] + 1; 
+    }
+  }
+
+}
+
+
 //Entrada: Nombre de un archivo como Char*
 //Funcionamiento: Lee un archivo de entrada y guarda en un arreglo las posiciones de impacto
 //Salida:  Arreglo de enteros
@@ -35,7 +103,7 @@ void lecturaPos(int * arregloPos, char * nombreEntrada, int cantidadParticulas){
 //Funcionamiento: Lee un archivo de entrada y guarda las energias de cada impacto   
 //Salida: Arreglo de enteros 
 
-void lecturaEn(int * arregloEn, char * nombreEntrada, int cantidadParticulas){
+void lectura(int * arregloEn, int * arregloPos, char * nombreEntrada, int pos_inicial,int pos_final){
     int auxiliarPos;
 
     //Lectura del archivo
@@ -44,10 +112,9 @@ void lecturaEn(int * arregloEn, char * nombreEntrada, int cantidadParticulas){
     {
         perror("\nArchivo No Existente\n");
     }else{
-        //fscanf(archivoEntrada, "%d", &cantidadParticulas);
-        for (int i = 0; i < cantidadParticulas; i++)
+        for (int i = pos_inicial-1; i < pos_final-1; i++)
         {
-            fscanf(archivoEntrada, "%d", &auxiliarPos);
+            fscanf(archivoEntrada, "%d", &arregloPos[i]);
             fscanf(archivoEntrada, "%d", &arregloEn[i]);
         }
     }
@@ -68,7 +135,9 @@ float impacto(float energiaInicial, int energiaParticula, int cantidadCeldas, in
 //Funcionamiento: Calcula los efectos de cada bombardeo en las celdas y entrega un archivo de salida con los resultados finales
 //Salida: Archivo de salida con el resultado final de las celdas
 
-void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int cantidadParticulas,char * nombreSalida){
+char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int cantidadParticulas,char * nombreSalida){
+
+    char* salida;
     float energiaInicial;
     float newEnergia;
     for (int i = 0; i < cantidadParticulas; i++)
@@ -84,14 +153,24 @@ void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int can
             }
         }
     }
-    escritura(arregloCeldas, cantidadCeldas, nombreSalida);
+    salida = escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida);
+}
+
+void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
+	FILE * archivoSalida = fopen(nombreSalida, "w");
+    //Se escribe el valor de energia de cada celda
+    for (int i = 0; i < cantidadCeldas; i++)
+    {
+        fprintf(archivoSalida, "%d %f\n", i, arregloCeldas[i]);
+    }
+	fclose(archivoSalida);
 }
 
 //Entrada: Float* X INT X CHAR* 
 //Funcionamiento: Escribe un archivo de salida, con el formato de indicar en la primera fila la celda con mas energia
 //Salida: Archivo TxT
 
-void escritura(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
+void escritura_Final(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
 	FILE * archivoSalida = fopen(nombreSalida, "w");
     int posMax = maximoPos(arregloCeldas, cantidadCeldas);
     //Se escribe la celda con mayor energia

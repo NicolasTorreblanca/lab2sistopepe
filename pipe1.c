@@ -9,7 +9,6 @@
 #define LECTURA 0
 #define ESCRITURA 1
 
-int avance();
 
 
 int calcular_N(int particulas,int procesos){
@@ -36,6 +35,17 @@ int avance(int* arreglo,int posicion_final){
     avanzado = avanzado + arreglo[i];
   }
   return avanzado;
+}
+
+int* actualizar(int* arreglo,int n){
+
+  int * actualizado = (int*)malloc(n*sizeof(int));
+
+  for(int i = 0;i<n;i++){
+    actualizado[i] = arreglo[i] + 1;
+  }
+  free(arreglo);
+  return actualizado;
 }
 
 void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particulas){
@@ -69,8 +79,7 @@ void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particul
 }
 
 
-
-int padre_hijo(int* arreglo, int n,int contador){
+void padre_hijo(int* arreglo, int n,int contador){
   int status;
 
   int proceso_hijo = 0;
@@ -79,6 +88,9 @@ int padre_hijo(int* arreglo, int n,int contador){
   int posterior = 0;
   int anterior = 0;
   int pid1 = -1;
+
+  char buffer[100];
+
 
 
   for(int i = 0; i < n; i ++){
@@ -92,7 +104,7 @@ int padre_hijo(int* arreglo, int n,int contador){
 
     if (pid1 == -1)
     {
-        return 1;
+        break;
     }
 
     if (pid1 == 0)
@@ -101,10 +113,20 @@ int padre_hijo(int* arreglo, int n,int contador){
         proceso_hijo = proceso_hijo +1;
         close(pipesPH[ESCRITURA]);
         close(pipesHP[LECTURA]);
-        read(pipesPH[LECTURA],&arreglo[i],sizeof(arreglo[i]));
+
+        
+
+      
+
+
+        read(pipesPH[LECTURA],&posterior,sizeof(posterior));
+
+                    
         anterior = avance(arreglo,i);
-        posterior = avance(arreglo,i+1);
-        printf("Trabajo desde : %d hasta %d\n",anterior,posterior);
+
+        printf("Trabajo desde %d hasta %d \n",anterior,posterior);
+
+
         write(pipesHP[ESCRITURA],&posterior,sizeof(posterior));
 
         free(pipesHP);
@@ -112,14 +134,20 @@ int padre_hijo(int* arreglo, int n,int contador){
 
     }else{
         proceso_padre = proceso_padre + 1;
-        
+
+        posterior = avance(arreglo,i+1);
+
         close(pipesPH[LECTURA]);
         close(pipesHP[ESCRITURA]);
-        write(pipesPH[ESCRITURA], &arreglo[i],sizeof(arreglo[i]));
-        wait(&status);
-        read(pipesHP[LECTURA], &posterior, sizeof(posterior));
-        printf("Mi hijo trabaja hasta: %d\n", posterior);
+        
+        write(pipesPH[ESCRITURA], &posterior,sizeof(posterior));
 
+        wait(&status);
+
+        read(pipesHP[LECTURA], &posterior, sizeof(posterior));
+
+
+        printf("Mi hijo trabaja hasta: %d\n", posterior);
         free(pipesPH);
 
     }
@@ -132,7 +160,6 @@ int padre_hijo(int* arreglo, int n,int contador){
 
 
 
-
 int main(){
   int particulas = 26;
   int procesos = 7; 
@@ -141,7 +168,8 @@ int main(){
 
   asignar_Particulas(particulas,procesos,n,arreglo);
 
-  int a = padre_hijo(arreglo,n,0);
+  padre_hijo(arreglo,n,0);
+  
   return 0;
   
 }
