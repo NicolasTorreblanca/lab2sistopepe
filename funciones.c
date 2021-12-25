@@ -73,7 +73,7 @@ void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int can
     float newEnergia;
     for (int i = 0; i < cantidadParticulas; i++)
     {
-        for (int j = 0; j < cantidadCeldas; j++)
+        for (int j = 0; j < cantidadCeldas; j+  +)
         {
             energiaInicial = arregloCeldas[j];
             newEnergia = impacto(energiaInicial, arregloEn[i], cantidadCeldas, j, arregloPos[i]);
@@ -108,7 +108,7 @@ void escritura(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
 //Entrada: Float* X INT
 //Funcionamiento: Encuentra el valor maximo del arreglo de flotantes y entrega su posicion en el arreglo
 //Salida: INT
-
+/*
 int maximoPos(float * arregloCeldas, int cantidadCeldas){
     int posMax = 0;
     for (int i = 0; i < cantidadCeldas; i++)
@@ -120,3 +120,4 @@ int maximoPos(float * arregloCeldas, int cantidadCeldas){
     }
     return posMax;
 }
+*/
