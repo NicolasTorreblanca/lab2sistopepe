@@ -13,38 +13,62 @@
 
 
 int main(int argc, char *argv[]){
-/*
-  const char separador[2] = " ";
-  char* entrada;
-  entrada = strtok(argv[0], entrada);
+
+  const char s[2] = " ";
+  char *entrada= strtok(argv[0],s);
 
   int i = 0;
+  char nombreEntrada[25];
+  char nombre_salida[25];
+  char celdas[25];
+  char ant_str[25];
+  char sup_str[25];
+  char iter_in[25];  
 
-// nombreEntrada nombre_salida cantidadCeldas  inicial final iteracion
-// Ej : test1_35.txt output.txt 35 0 4 0
 
-*/
-  int cantidadCeldas = 35;
+  printf("xd\n");
 
-  char* nombreEntrada = "test1_35.txt";
-  char* nombre_salida = "output.txt";
+  while( entrada != NULL ) {
+      
+      if(i == 0){
+        strcpy(nombreEntrada,entrada);   
+        i = i+1;    
+      }
+      else if(i == 1){
+        strcpy(nombre_salida,entrada);    
+        i = i+1;    
+      }
+      else if(i == 2){
+        strcpy(celdas,entrada);
+        i = i+1;    
+      }
+      else if(i == 3){
+        strcpy(ant_str,entrada);
+        i = i+1;    
+      }
+      else if(i == 4){  
+        strcpy(sup_str,entrada);
+        i=i+1;
+      }
+      else if(i == 5){
+        strcpy(iter_in,entrada);
+      } 
 
-  int superior = 5;
-  
-  int inferior = 0;
+      entrada = strtok(NULL, s);   
+  }
 
+
+  int cantidadCeldas = atoi(celdas);
+  int superior = atoi(sup_str);
+  int inferior = atoi(ant_str);
+  int iteracion = atoi(iter_in);
   int diferencia = superior - inferior;
-
-  int iteracion = 0;
-
 
   float * arregloCeldas = (float*)malloc(cantidadCeldas*sizeof(float));
   
   int * arregloPos = (int*)malloc(diferencia*sizeof(int));
   
   int * arregloEn = (int*)malloc(diferencia*sizeof(int));  
-
-  printf("previa lectura \n");
 
   lectura(arregloEn,arregloPos,nombreEntrada,inferior,superior);
 
@@ -53,15 +77,12 @@ int main(int argc, char *argv[]){
     printf(" %d \n",arregloPos[i]);
   }
 
-  printf("post lectura \n");  
 
   bombardeo(arregloCeldas, arregloPos, arregloEn, cantidadCeldas,diferencia,nombre_salida); 
 
   printf("fin escritura \n");
   char iter[12];
   sprintf(iter, " %d",iteracion);
-
-  printf("nombre_salida : %s, it: %s \n",nombre_salida,iter);
 
   char salida[100];
 

@@ -9,6 +9,32 @@
 
 //----DEFINICION DE FUNCIONES----
 
+void juntar_Arreglos(float** parcial,int cantidadCeldas,int n,nombreSalida){
+
+  float * reunido = (float*)malloc(cantidadCeldas*sizeof(float));
+  
+  for(int i = 0; i < cantidadCeldas;i++){
+    float contador = 0.0;
+    for(int j = 0; j < n; j++){
+      contador = contador + parcial[i][j];
+    }
+    reunido[i] = contador;
+  }
+
+  for (int k = 0; k < n; k++){
+      free(parcial[k]);
+  }
+
+  free(parcial);
+
+  escritura_Final(reunido,cantidadCeldas,nombreSalida);
+}
+
+
+
+
+
+
 int calcular_N(int particulas,int procesos){
 
   int n;

@@ -10,75 +10,7 @@
 #define LECTURA 0
 #define ESCRITURA 1
 
-
-
-int calcular_N(int particulas,int procesos){
-
-  int n;
-
-  if(particulas % procesos == 0){
-    n = particulas / procesos;
-  }
-
-  else{    
-    int j = particulas % procesos;
-    int particulas_corregidas = particulas - j;
-    n = particulas_corregidas / procesos;
-  }
-  return n;
-}
-
-int avance(int* arreglo,int posicion_final){
-  
-  int avanzado = 0;
-
-  for(int i = 0; i<posicion_final;i++){
-    avanzado = avanzado + arreglo[i];
-  }
-  return avanzado;
-}
-
-int* actualizar(int* arreglo,int n){
-
-  int * actualizado = (int*)malloc(n*sizeof(int));
-
-  for(int i = 0;i<n;i++){
-    actualizado[i] = arreglo[i] + 1;
-  }
-  free(arreglo);
-  return actualizado;
-}
-
-void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particulas){
-
-  if(particulas % procesos == 0){
-      for(int i = 0; i<n ; i++){
-        arreglo_particulas[i] = procesos;    
-    }
-  }
-
-  else{
-    int j = particulas % procesos;
-    int particulas_corregidas = particulas - j;
-
-    for(int i =0; i<n ; i++){
-      arreglo_particulas[i] = procesos;
-    }
-    for(int k =0 ;k<j;k++){
-      while(j>n){
-        for(int i = 0; i<n ; i++){
-          arreglo_particulas[i] = arreglo_particulas[i] + 1; 
-        }
-        j = j-n;        
-      }
-      arreglo_particulas[k] = arreglo_particulas[k] + 1; 
-    }
-  }
-
-}
-
-
-void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * nombreSalida){
+void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * nombreSalida,int cantidad_Celdas){
   int status;
 
   int proceso_hijo = 0;
@@ -89,7 +21,6 @@ void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * no
   int pid1 = -1;
 
   char aux[125];
-
   char bufferHP[100];
 
   for(int i = 0; i < n; i ++){
@@ -118,21 +49,39 @@ void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * no
         char* esp = " ";        
         char mensaje[125];
 
+        char celdas[12];
+        sprintf(celdas, "%d", cantidad_Celdas);
+
+
         strcpy(mensaje,nombre_entrada);
         strcat(mensaje,esp);
         strcat(mensaje,nombreSalida);
         strcat(mensaje,esp);
+        strcat(mensaje,celdas);
+        strcat(mensaje,esp);
         strcat(mensaje,aux);
 
-        char *const bufferPH[1]={mensaje};
 
+        printf("entrega : %s \n",mensaje);
+
+        char* entrega;
+        strcpy(entrega,mensaje);
+       
+        char *const bufferPH[1]={entrega};
+
+
+        printf("entrega : %s \n",entrega);
+
+        printf("entrando al exec \n");
         dup2(pipesHP[ESCRITURA],STDOUT_FILENO); 
         execvp("./bomb",bufferPH);
 
 
-        printf("HOLA\n");
+        printf(" exec fallo \n");
         perror("exec ls failed");
-        exit(EXIT_FAILURE);      
+        exit(EXIT_FAILURE);
+
+
         free(pipesHP);
         break;
 
@@ -193,14 +142,23 @@ void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * no
 
 
 int main(){
-  int particulas = 13;
-  int procesos = 4; 
+  int particulas = 5;
+  int procesos = 5;
+  int cantidad_Celdas = 35;
   int n  = calcular_N(particulas,procesos);
   int * arreglo = (int*)malloc(n*sizeof(int));
 
   asignar_Particulas(particulas,procesos,n,arreglo);
 
-  padre_hijo(arreglo,n,0,"test1_35.txt","output.txt");
+  padre_hijo(arreglo,n,0,"test1_35.txt","output.txt",cantidad_Celdas);
+
+  float** arr = (float**)malloc(n * sizeof(float*));
+
+  for (i = 0; i < n; i++){
+    arr[i] = (float*)malloc(cantidad_Celdas * sizeof(float));
+  }
+ 
+
   
   return 0;
   
