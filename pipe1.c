@@ -52,8 +52,6 @@ int* actualizar(int* arreglo,int n){
 void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particulas){
 
   if(particulas % procesos == 0){
-
-      n = particulas / procesos;
       for(int i = 0; i<n ; i++){
         arreglo_particulas[i] = procesos;    
     }
@@ -80,7 +78,7 @@ void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particul
 }
 
 
-void padre_hijo(int* arreglo, int n,int contador){
+void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * nombreSalida){
   int status;
 
   int proceso_hijo = 0;
@@ -90,9 +88,9 @@ void padre_hijo(int* arreglo, int n,int contador){
   int anterior = 0;
   int pid1 = -1;
 
-  char buffer[100];
+  char aux[125];
 
-
+  char bufferHP[100];
 
   for(int i = 0; i < n; i ++){
     int * pipesPH = (int*)malloc(sizeof(int)*2); 
@@ -115,10 +113,26 @@ void padre_hijo(int* arreglo, int n,int contador){
         close(pipesPH[ESCRITURA]);
         close(pipesHP[LECTURA]);
 
-        read(pipesPH[LECTURA],&posterior,sizeof(posterior));
+        read(pipesPH[LECTURA],aux,sizeof(aux));
 
-        write(pipesHP[ESCRITURA],&posterior,sizeof(posterior));
+        char* esp = " ";        
+        char mensaje[125];
 
+        strcpy(mensaje,nombre_entrada);
+        strcat(mensaje,esp);
+        strcat(mensaje,nombreSalida);
+        strcat(mensaje,esp);
+        strcat(mensaje,aux);
+
+        char *const bufferPH[1]={mensaje};
+
+        dup2(pipesHP[ESCRITURA],STDOUT_FILENO); 
+        execvp("./bomb",bufferPH);
+
+
+        printf("HOLA\n");
+        perror("exec ls failed");
+        exit(EXIT_FAILURE);      
         free(pipesHP);
         break;
 
@@ -150,22 +164,16 @@ void padre_hijo(int* arreglo, int n,int contador){
               
         printf("Trabajo entre %s \n",aux);
 
-
-
-
         close(pipesPH[LECTURA]);
         close(pipesHP[ESCRITURA]);
         
-        write(pipesPH[ESCRITURA], &posterior,sizeof(posterior));
+        write(pipesPH[ESCRITURA], aux,sizeof(aux));
 
         wait(&status);
-
-        arreglo = actualizar(arreglo,n);
-
-        read(pipesHP[LECTURA], &posterior, sizeof(posterior));
+        read(pipesHP[LECTURA], bufferHP, 100);
 
 
-        printf("Mi hijo trabaja hasta: %d\n", posterior);
+        printf("Mi hijo escribio: %s\n", bufferHP);
         free(pipesPH);
 
         if(i+1 == n){  
@@ -185,16 +193,14 @@ void padre_hijo(int* arreglo, int n,int contador){
 
 
 int main(){
-  int particulas = 26;
-  int procesos = 7; 
+  int particulas = 13;
+  int procesos = 4; 
   int n  = calcular_N(particulas,procesos);
   int * arreglo = (int*)malloc(n*sizeof(int));
 
   asignar_Particulas(particulas,procesos,n,arreglo);
 
-  padre_hijo(arreglo,n,0);
-
-
+  padre_hijo(arreglo,n,0,"test1_35.txt","output.txt");
   
   return 0;
   

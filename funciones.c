@@ -76,10 +76,6 @@ void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particul
 
 }
 
-char * reune_Numeros(int anterior,int superior,int iteracion){
-
-}
-
 
 //Entrada: Nombre de un archivo como Char*
 //Funcionamiento: Lee un archivo de entrada y guarda las energias de cada impacto   
@@ -117,14 +113,14 @@ float impacto(float energiaInicial, int energiaParticula, int cantidadCeldas, in
 //Funcionamiento: Calcula los efectos de cada bombardeo en las celdas y entrega un archivo de salida con los resultados finales
 //Salida: Archivo de salida con el resultado final de las celdas
 
-char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int cantidadParticulas,int diferencia,char * nombreSalida,char* iteracion){
+void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int diferencia,char * nombreSalida){
 
     char* salida;
     float energiaInicial;
     float newEnergia;
     for (int i = 0; i < diferencia; i++)
     {
-        for (int j = 0; j <cantidadParticulas; j++)
+        for (int j = 0; j <cantidadCeldas; j++)
         {
             energiaInicial = arregloCeldas[j];
             newEnergia = impacto(energiaInicial, arregloEn[i], cantidadCeldas, j, arregloPos[i]);
@@ -135,10 +131,7 @@ char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int ca
             }
         }
     }
-    salida = escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida,iteracion);
-
-    return salida;
-
+    escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida);
 }
 
 void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
@@ -183,8 +176,4 @@ int maximoPos(float * arregloCeldas, int cantidadCeldas){
         }
     }
     return posMax;
-}
-
-int main(){
-  return 0;
 }
