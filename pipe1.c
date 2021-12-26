@@ -1,3 +1,4 @@
+#include "funciones.h"
 #include <unistd.h> 
 #include <stdio.h> 
 #include <stdlib.h> 
@@ -126,12 +127,16 @@ void padre_hijo(int* arreglo, int n,int contador){
 
         posterior = avance(arreglo,i+1);
         anterior = avance(arreglo,i);
-        
+
+
+
+               
+        char ant_str[12];
+        sprintf(ant_str, "%d", anterior);
 
         char post_str[12];
         sprintf(post_str, "%d", posterior);
-        char ant_str[12];
-        sprintf(ant_str, "%d", anterior);
+
         char iter[12];
         sprintf(iter, "%d",i);
 
@@ -144,10 +149,9 @@ void padre_hijo(int* arreglo, int n,int contador){
         aux = strcat(aux,esp);
 
         aux = strcat(aux,iter);
-        
+              
         printf("Trabajo entre %s \n",aux);
 
-        
 
 
 

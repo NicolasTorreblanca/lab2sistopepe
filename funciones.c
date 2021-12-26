@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //----DEFINICION DE FUNCIONES----
 
@@ -75,29 +76,10 @@ void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particul
 
 }
 
+char * reune_Numeros(int anterior,int superior,int iteracion){
 
-//Entrada: Nombre de un archivo como Char*
-//Funcionamiento: Lee un archivo de entrada y guarda en un arreglo las posiciones de impacto
-//Salida:  Arreglo de enteros
-
-void lecturaPos(int * arregloPos, char * nombreEntrada, int cantidadParticulas){    
-    int auxiliarEnergia;
-
-    //Lectura del archivo
-    FILE * archivoEntrada = fopen(nombreEntrada, "r");
-    if (archivoEntrada == NULL)
-    {
-        perror("\nArchivo No Existente\n");
-    }else{
-        //fscanf(archivoEntrada, "%d", &cantidadParticulas);
-        for (int i = 0; i < cantidadParticulas; i++)
-        {
-            fscanf(archivoEntrada, "%d", &arregloPos[i]);
-            fscanf(archivoEntrada, "%d", &auxiliarEnergia);
-        }
-    }
-    fclose(archivoEntrada);
 }
+
 
 //Entrada: Nombre de un archivo como Char*
 //Funcionamiento: Lee un archivo de entrada y guarda las energias de cada impacto   
@@ -135,14 +117,14 @@ float impacto(float energiaInicial, int energiaParticula, int cantidadCeldas, in
 //Funcionamiento: Calcula los efectos de cada bombardeo en las celdas y entrega un archivo de salida con los resultados finales
 //Salida: Archivo de salida con el resultado final de las celdas
 
-char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int cantidadParticulas,char * nombreSalida){
+char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int cantidadParticulas,int diferencia,char * nombreSalida,char* iteracion){
 
     char* salida;
     float energiaInicial;
     float newEnergia;
-    for (int i = 0; i < cantidadParticulas; i++)
+    for (int i = 0; i < diferencia; i++)
     {
-        for (int j = 0; j < cantidadCeldas; j+  +)
+        for (int j = 0; j < diferencia; j++)
         {
             energiaInicial = arregloCeldas[j];
             newEnergia = impacto(energiaInicial, arregloEn[i], cantidadCeldas, j, arregloPos[i]);
@@ -153,10 +135,13 @@ char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int ca
             }
         }
     }
-    salida = escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida);
+    salida = escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida,iteracion);
+
+    return salida;
+
 }
 
-void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
+char* escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida,char * iteracion){
 	FILE * archivoSalida = fopen(nombreSalida, "w");
     //Se escribe el valor de energia de cada celda
     for (int i = 0; i < cantidadCeldas; i++)
@@ -164,6 +149,11 @@ void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSa
         fprintf(archivoSalida, "%d %f\n", i, arregloCeldas[i]);
     }
 	fclose(archivoSalida);
+  const char esp[2] = " ";
+  char* salida = strcat(nombreSalida,esp);
+  salida = strcat(salida,iteracion);
+
+  return salida;
 }
 
 //Entrada: Float* X INT X CHAR* 
@@ -187,7 +177,7 @@ void escritura_Final(float * arregloCeldas, int cantidadCeldas,char * nombreSali
 //Entrada: Float* X INT
 //Funcionamiento: Encuentra el valor maximo del arreglo de flotantes y entrega su posicion en el arreglo
 //Salida: INT
-/*
+
 int maximoPos(float * arregloCeldas, int cantidadCeldas){
     int posMax = 0;
     for (int i = 0; i < cantidadCeldas; i++)
@@ -199,4 +189,7 @@ int maximoPos(float * arregloCeldas, int cantidadCeldas){
     }
     return posMax;
 }
-*/
+
+int main(){
+  return 0;
+}
