@@ -128,8 +128,6 @@ void padre_hijo(int* arreglo, int n,int contador){
         posterior = avance(arreglo,i+1);
         anterior = avance(arreglo,i);
 
-
-
                
         char ant_str[12];
         sprintf(ant_str, "%d", anterior);

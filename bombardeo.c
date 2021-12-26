@@ -15,13 +15,13 @@ float impacto(float energiaInicial, int energiaParticula, int cantidadCeldas, in
     return newEnergia;
 }
 
-void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int cantidadParticulas,int diferencia,char * nombreSalida,char* iteracion,char*salida){
+void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int diferencia,char * nombreSalida){
 
     float energiaInicial;
     float newEnergia;
     for (int i = 0; i < diferencia; i++)
     {
-        for (int j = 0; j < diferencia; j++)
+        for (int j = 0; j <cantidadCeldas; j++)
         {
             energiaInicial = arregloCeldas[j];
             newEnergia = impacto(energiaInicial, arregloEn[i], cantidadCeldas, j, arregloPos[i]);
@@ -31,9 +31,8 @@ void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int can
                 arregloCeldas[j] = newEnergia;
             }
         }
-    }
-    salida = escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida,iteracion);
-
+      }
+    escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida);
 }
 
 void lectura(int * arregloEn, int * arregloPos, char * nombreEntrada, int pos_inicial,int pos_final){
@@ -45,30 +44,28 @@ void lectura(int * arregloEn, int * arregloPos, char * nombreEntrada, int pos_in
     {
         perror("\nArchivo No Existente\n");
     }else{
-        for (int i = pos_inicial-1; i < pos_final-1; i++)
+        for (int i = pos_inicial; i < pos_final; i++)
         {
             fscanf(archivoEntrada, "%d", &arregloPos[i]);
             fscanf(archivoEntrada, "%d", &arregloEn[i]);
         }
     }
     fclose(archivoEntrada);
+    
 }
 
 
-char* escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida,char * iteracion){
+void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
 	FILE * archivoSalida = fopen(nombreSalida, "w");
     //Se escribe el valor de energia de cada celda
     for (int i = 0; i < cantidadCeldas; i++)
-    {
-        fprintf(archivoSalida, "%d %f\n", i, arregloCeldas[i]);
+    { 
+      fprintf(archivoSalida, "%d %f \n", i, arregloCeldas[i]);
+             
     }
-	fclose(archivoSalida);
-  const char esp[2] = " ";
-  char* salida = strcat(nombreSalida,esp);
-  salida = strcat(salida,iteracion);
-
-  return salida;
+	  fclose(archivoSalida);
 }
+
 
 int main(int argc, char *argv[]){
 /*
@@ -87,21 +84,20 @@ int main(int argc, char *argv[]){
   char* nombreEntrada = "test1_35.txt";
   char* nombre_salida = "output.txt";
 
-  int superior = 4;
+  int superior = 5;
   
   int inferior = 0;
 
   int diferencia = superior - inferior;
 
-  char* iteracion = "0";
+  int iteracion = 0;
 
-  int cantidadParticulas = superior-inferior;
 
   float * arregloCeldas = (float*)malloc(cantidadCeldas*sizeof(float));
   
-  int * arregloPos = (int*)malloc(cantidadParticulas*sizeof(int));
+  int * arregloPos = (int*)malloc(diferencia*sizeof(int));
   
-  int * arregloEn = (int*)malloc(cantidadParticulas*sizeof(int));  
+  int * arregloEn = (int*)malloc(diferencia*sizeof(int));  
 
   printf("previa lectura \n");
 
@@ -112,13 +108,24 @@ int main(int argc, char *argv[]){
     printf(" %d \n",arregloPos[i]);
   }
 
-  char* retorno;
-
   printf("post lectura \n");  
 
-  bombardeo(arregloCeldas, arregloPos, arregloEn, cantidadCeldas, cantidadParticulas,diferencia,nombre_salida,iteracion,retorno); 
+  bombardeo(arregloCeldas, arregloPos, arregloEn, cantidadCeldas,diferencia,nombre_salida); 
 
-  printf("salida : %s",retorno);
+  printf("fin escritura \n");
+  char iter[12];
+  sprintf(iter, " %d",iteracion);
+
+  printf("nombre_salida : %s, it: %s \n",nombre_salida,iter);
+
+  char salida[100];
+
+  strcpy(salida,nombre_salida);
+  strcat(salida,iter);
+
+  printf("nombre_salida : %s \n",salida);  
+
+
 //	write(STDOUT_FILENO,retorno, 100); 
 
   free(arregloCeldas);

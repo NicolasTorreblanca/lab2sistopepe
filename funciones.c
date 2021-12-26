@@ -94,7 +94,7 @@ void lectura(int * arregloEn, int * arregloPos, char * nombreEntrada, int pos_in
     {
         perror("\nArchivo No Existente\n");
     }else{
-        for (int i = pos_inicial-1; i < pos_final-1; i++)
+        for (int i = pos_inicial; i < pos_final; i++)
         {
             fscanf(archivoEntrada, "%d", &arregloPos[i]);
             fscanf(archivoEntrada, "%d", &arregloEn[i]);
@@ -124,7 +124,7 @@ char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int ca
     float newEnergia;
     for (int i = 0; i < diferencia; i++)
     {
-        for (int j = 0; j < diferencia; j++)
+        for (int j = 0; j <cantidadParticulas; j++)
         {
             energiaInicial = arregloCeldas[j];
             newEnergia = impacto(energiaInicial, arregloEn[i], cantidadCeldas, j, arregloPos[i]);
@@ -141,7 +141,7 @@ char* bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int ca
 
 }
 
-char* escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida,char * iteracion){
+void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
 	FILE * archivoSalida = fopen(nombreSalida, "w");
     //Se escribe el valor de energia de cada celda
     for (int i = 0; i < cantidadCeldas; i++)
@@ -149,11 +149,6 @@ char* escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreS
         fprintf(archivoSalida, "%d %f\n", i, arregloCeldas[i]);
     }
 	fclose(archivoSalida);
-  const char esp[2] = " ";
-  char* salida = strcat(nombreSalida,esp);
-  salida = strcat(salida,iteracion);
-
-  return salida;
 }
 
 //Entrada: Float* X INT X CHAR* 
