@@ -103,7 +103,7 @@ void padre_hijo(int* arreglo, int n,int contador){
     pid1 = fork();
 
     if (pid1 == -1)
-    {
+    {       
         break;
     }
 
@@ -114,18 +114,7 @@ void padre_hijo(int* arreglo, int n,int contador){
         close(pipesPH[ESCRITURA]);
         close(pipesHP[LECTURA]);
 
-        
-
-      
-
-
         read(pipesPH[LECTURA],&posterior,sizeof(posterior));
-
-                    
-        anterior = avance(arreglo,i);
-
-        printf("Trabajo desde %d hasta %d \n",anterior,posterior);
-
 
         write(pipesHP[ESCRITURA],&posterior,sizeof(posterior));
 
@@ -136,6 +125,31 @@ void padre_hijo(int* arreglo, int n,int contador){
         proceso_padre = proceso_padre + 1;
 
         posterior = avance(arreglo,i+1);
+        anterior = avance(arreglo,i);
+        
+
+        char post_str[12];
+        sprintf(post_str, "%d", posterior);
+        char ant_str[12];
+        sprintf(ant_str, "%d", anterior);
+        char iter[12];
+        sprintf(iter, "%d",i);
+
+        char* esp = " ";
+
+        char* aux = strcat(ant_str,esp);
+
+        aux = strcat(aux,post_str);
+
+        aux = strcat(aux,esp);
+
+        aux = strcat(aux,iter);
+        
+        printf("Trabajo entre %s \n",aux);
+
+        
+
+
 
         close(pipesPH[LECTURA]);
         close(pipesHP[ESCRITURA]);
@@ -144,11 +158,19 @@ void padre_hijo(int* arreglo, int n,int contador){
 
         wait(&status);
 
+        arreglo = actualizar(arreglo,n);
+
         read(pipesHP[LECTURA], &posterior, sizeof(posterior));
 
 
         printf("Mi hijo trabaja hasta: %d\n", posterior);
         free(pipesPH);
+
+        if(i+1 == n){  
+          for(int j =0;j<n;j++){
+          printf(" %d " , arreglo[j]);
+          }
+        }
 
     }
 
@@ -169,6 +191,8 @@ int main(){
   asignar_Particulas(particulas,procesos,n,arreglo);
 
   padre_hijo(arreglo,n,0);
+
+
   
   return 0;
   
