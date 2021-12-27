@@ -94,14 +94,10 @@ int main(int argc, char ** argv){
     int * arregloPos = (int*)malloc(cantidadParticulas*sizeof(int));
     int * arregloEn = (int*)malloc(cantidadParticulas*sizeof(int));
 
-    //Estos arreglos se rellenan con la lectura del archivo de entrada
-    lecturaPos(arregloPos, nombreEntrada, cantidadParticulas);
-
-    lecturaEn(arregloEn, nombreEntrada, cantidadParticulas);
 
 
-    //Ejecucion de la funcion bombardeo
-    bombardeo(arregloCeldas, arregloPos, arregloEn, cantidadCeldas, cantidadParticulas, nombreSalida);
+
+
 
   
     //Se calculo la celda con mayor energia

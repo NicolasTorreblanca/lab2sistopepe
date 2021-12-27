@@ -10,6 +10,9 @@ void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSa
 void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particulas);
 int calcular_N(int particulas,int procesos);
 int avance(int* arreglo,int posicion_final);
+void juntar_Arreglos(float** parcial,int cantidadCeldas,int n,char * nombreSalida);
+
+float **actualizar_Arreglo(float** parcial,int cantidadCeldas,char * entrada);
 
 
 

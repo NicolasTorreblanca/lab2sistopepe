@@ -15,7 +15,7 @@
 int main(int argc, char *argv[]){
 
   const char s[2] = " ";
-  char *entrada= strtok(argv[0],s);
+  char *entrada= strtok(argv[1],s);
 
   int i = 0;
   char nombreEntrada[25];
@@ -53,7 +53,6 @@ int main(int argc, char *argv[]){
       else if(i == 5){
         strcpy(iter_in,entrada);
       } 
-
       entrada = strtok(NULL, s);   
   }
 

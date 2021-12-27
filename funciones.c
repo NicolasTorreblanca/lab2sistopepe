@@ -9,7 +9,12 @@
 
 //----DEFINICION DE FUNCIONES----
 
-void juntar_Arreglos(float** parcial,int cantidadCeldas,int n,nombreSalida){
+//Entrada: Float** X INT X INT X CHAR*
+//Funcionamiento: Suma todos los arreglos parciales generados por el programa    
+//Salida: Archivo de salida 
+
+
+void juntar_Arreglos(float** parcial,int cantidadCeldas,int n,char * nombreSalida){
 
   float * reunido = (float*)malloc(cantidadCeldas*sizeof(float));
   
@@ -30,9 +35,55 @@ void juntar_Arreglos(float** parcial,int cantidadCeldas,int n,nombreSalida){
   escritura_Final(reunido,cantidadCeldas,nombreSalida);
 }
 
+//Entrada: FLOAT ** X INT X CHAR*
+//Funcionamiento: Actualiza el valor de un determinado arreglo en base a lo leido en un archivo 
+//Salida: Arreglo de arreglo de flotantes
+
+float **actualizar_Arreglo(float** parcial,int cantidadCeldas,char * entrada){
+
+  int auxiliarPos;
+
+  const char s[2] = " ";
+  char*inicial = strtok(entrada,s);
+  int i = 0;
+  char nombreEntrada[25];
+  char iter[25];
+
+  while( entrada != NULL ) {
+      
+      if(i == 0){
+        strcpy(nombreEntrada,entrada);   
+        i = i+1;    
+      }
+      else if(i == 1){
+        strcpy(iter,entrada);    
+        i = i+1;    
+      }
+      entrada = strtok(NULL, s);   
+  }
+
+  int iteracion = atoi(iter);
 
 
+  //Lectura del archivo
+  FILE * archivoEntrada = fopen(nombreEntrada, "r");
+  if (archivoEntrada == NULL)
+  {
+      perror("\nArchivo No Existente\n");
+  }else{
+      for (int i = 0; i < cantidadCeldas; i++)
+        {
+            fscanf(archivoEntrada, "%d", &auxiliarPos);
+            fscanf(archivoEntrada, "%f", &parcial[iteracion][i]);
+        }
+    fclose(archivoEntrada);
+  }
+  return parcial;
+}
 
+//Entrada: Int x Int
+//Funcionamiento: Permite calcular el N(cantidad total de hijos) que tendra el programa   
+//Salida: Entero que indica la cantidad de hijos del padre
 
 
 int calcular_N(int particulas,int procesos){
@@ -61,16 +112,10 @@ int avance(int* arreglo,int posicion_final){
   return avanzado;
 }
 
-int* actualizar(int* arreglo,int n){
+//Entrada:INT X INT X INT X INT*
+//Funcionamiento: Realiza asignaciones de procesos para cada particula 
+//Salida: 
 
-  int * actualizado = (int*)malloc(n*sizeof(int));
-
-  for(int i = 0;i<n;i++){
-    actualizado[i] = arreglo[i] + 1;
-  }
-  free(arreglo);
-  return actualizado;
-}
 
 void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particulas){
 
@@ -101,6 +146,8 @@ void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particul
   }
 
 }
+
+
 
 
 //Entrada: Nombre de un archivo como Char*
