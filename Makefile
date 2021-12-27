@@ -1,27 +1,22 @@
 #Makefile
 
-CC = gcc
-CFLAGS = -Wall -lm -lniceprint
-out = lab1
-source = lab1.c funciones.c
-objects = $(source:.c=.o)
-depends = .depends
-headers = funciones.h
+CC=gcc
+CFLAGS=-Wall -lm -lniceprint -L  .
+all : lab2 bombardeo 
 
-$(out): $(objects)
-	$(CC) -o $@ $^ $(CFLAGS) -L .
+lab2: lab2.c funciones.c funciones.h
+	$(CC) funciones.c lab2.c -o lab2 $(CFLAGS)
 
-$(objects): 
-	$(CC) -c $*.c
+bombardeo: bombardeo.c funciones.c funciones.h
+	$(CC) funciones.c bombardeo.c -o bombardeo $(CFLAGS)
 
-$(depends): $(source) $(headers)
-	@$(CC) -MM $(source) > $@	
 
 clean:
-	$(RM) $(out) $(objects) $(depends)
+	rm -f *.o .exe all
+.PHONY : clean
 
-.PHONY: clean
-sinclude $(depends)
+run:
+	./lab2 -N 35 -p 5 -c 5 -i test1_35.txt -o out1_35.txt -D
 
 run:
 #	./lab1 -N 35 -p 2 -c 5 -i test1_35.txt -o out1.txt -D

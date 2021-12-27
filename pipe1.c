@@ -10,7 +10,7 @@
 #define LECTURA 0
 #define ESCRITURA 1
 
-void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * nombreSalida,int cantidad_Celdas,float**pendientes){
+void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * nombreSalida,int cantidad_Celdas,float*pendientes){
   int status;
 
   int proceso_hijo = 0;
@@ -62,12 +62,12 @@ void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * no
         strcat(buffPH,aux);
 
        
-        char *args[3]={"./bomb",buffPH,NULL};
+        char *args[2]={buffPH,NULL};
 
-        printf("Se entrego :%s \n",args[1]);
+        printf("Se entrego :%s \n",args[0]);
  
         dup2(pipesHP[ESCRITURA],STDOUT_FILENO);
-        execv(args[0],args);
+        execvp("./bomb",args);
 
         printf(" exec fallo \n");
         perror("exec ls failed");
@@ -108,15 +108,11 @@ void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * no
 
         printf("Mi hijo escribio: %s\n", bufferHP);
 
-        pendientes = actualizar_Arreglo(pendientes,cantidad_Celdas,bufferHP);     
+        pendientes = actualizar_Arreglo(pendientes,cantidad_Celdas,bufferHP,n,nombreSalida);
+        
         free(pipesPH);
 
-        if(i+1 == n){  
-          juntar_Arreglos(pendientes,cantidad_Celdas,n,nombreSalida);
-        }
-
     }
-
       printf("\nPP : %d , PH : %d\n",proceso_padre,proceso_hijo);
   }
     
@@ -126,22 +122,17 @@ void padre_hijo(int* arreglo, int n,int contador,char * nombre_entrada,char * no
 
 
 int main(){
-  int particulas = 7;
-  int procesos = 7;
+  int particulas =7;
+  int procesos =7;
   int cantidad_Celdas = 35;
   int n  = calcular_N(particulas,procesos);
   int * arreglo = (int*)malloc(n*sizeof(int));
 
   asignar_Particulas(particulas,procesos,n,arreglo);
 
-  float** pendientes = (float**)malloc(n * sizeof(float*));
+  float* pendientes = (float*)malloc(cantidad_Celdas * sizeof(float));
 
-  for (int i = 0; i < n; i++){
-    pendientes[i] = (float*)malloc(cantidad_Celdas * sizeof(float));
-  }
- 
-
-  padre_hijo(arreglo,n,0,"test1_35.txt","output.txt",cantidad_Celdas,pendientes);
+  padre_hijo(arreglo,n,0,"test2_35.txt","output.txt",cantidad_Celdas,pendientes);
   
   return 0;
   

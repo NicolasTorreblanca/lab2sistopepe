@@ -15,7 +15,7 @@
 int main(int argc, char *argv[]){
 
   const char s[2] = " ";
-  char *entrada= strtok(argv[1],s);
+  char *entrada= strtok(argv[0],s);
 
   int i = 0;
   char nombreEntrada[25];
@@ -71,12 +71,6 @@ int main(int argc, char *argv[]){
 
   lectura(arregloEn,arregloPos,nombreEntrada,inferior,superior);
 
-  for(int i=0;i<diferencia;i++){
-    printf("%d ",arregloEn[i]);
-    printf(" %d \n",arregloPos[i]);
-  }
-
-
   bombardeo(arregloCeldas, arregloPos, arregloEn, cantidadCeldas,diferencia,nombre_salida); 
 
   printf("fin escritura \n");
@@ -89,7 +83,6 @@ int main(int argc, char *argv[]){
   strcat(salida,iter);
 
   printf("nombre_salida : %s \n",salida);  
-
 
   write(STDOUT_FILENO,salida, 100); 
 

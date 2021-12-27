@@ -9,39 +9,15 @@
 
 //----DEFINICION DE FUNCIONES----
 
-//Entrada: Float** X INT X INT X CHAR*
-//Funcionamiento: Suma todos los arreglos parciales generados por el programa    
-//Salida: Archivo de salida 
-
-
-void juntar_Arreglos(float** parcial,int cantidadCeldas,int n,char * nombreSalida){
-
-  float * reunido = (float*)malloc(cantidadCeldas*sizeof(float));
-  
-  for(int i = 0; i < cantidadCeldas;i++){
-    float contador = 0.0;
-    for(int j = 0; j < n; j++){
-      contador = contador + parcial[i][j];
-    }
-    reunido[i] = contador;
-  }
-
-  for (int k = 0; k < n; k++){
-      free(parcial[k]);
-  }
-
-  free(parcial);
-
-  escritura_Final(reunido,cantidadCeldas,nombreSalida);
-}
 
 //Entrada: FLOAT ** X INT X CHAR*
 //Funcionamiento: Actualiza el valor de un determinado arreglo en base a lo leido en un archivo 
 //Salida: Arreglo de arreglo de flotantes
 
-float **actualizar_Arreglo(float** parcial,int cantidadCeldas,char * entrada){
+void actualizar_Arreglo(float* parcial,int cantidadCeldas,char * entrada, int n,char* nombreSalida){
 
   int auxiliarPos;
+  float* futuro = (float*)malloc(cantidadCeldas* sizeof(float));
 
   const char s[2] = " ";
   char*inicial = strtok(entrada,s);
@@ -52,17 +28,18 @@ float **actualizar_Arreglo(float** parcial,int cantidadCeldas,char * entrada){
   while( entrada != NULL ) {
       
       if(i == 0){
-        strcpy(nombreEntrada,entrada);   
+        strcpy(nombreEntrada,inicial);   
         i = i+1;    
       }
       else if(i == 1){
-        strcpy(iter,entrada);    
+        strcpy(iter,inicial);    
         i = i+1;    
       }
-      entrada = strtok(NULL, s);   
+      inicial = strtok(NULL, s);   
   }
 
   int iteracion = atoi(iter);
+
 
 
   //Lectura del archivo
@@ -74,11 +51,22 @@ float **actualizar_Arreglo(float** parcial,int cantidadCeldas,char * entrada){
       for (int i = 0; i < cantidadCeldas; i++)
         {
             fscanf(archivoEntrada, "%d", &auxiliarPos);
-            fscanf(archivoEntrada, "%f", &parcial[iteracion][i]);
+            fscanf(archivoEntrada, "%f", &futuro[i]);
+            
         }
     fclose(archivoEntrada);
   }
-  return parcial;
+
+  for(int j = 0; j < cantidadCeldas;j++){
+      parcial[j] = futuro[j] + parcial[j];
+  }
+
+  if(iteracion+1 == n){
+      escritura_Final(parcial,cantidadCeldas,nombreSalida);
+  }
+ 
+  free(futuro);
+
 }
 
 //Entrada: Int x Int
@@ -129,7 +117,7 @@ void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particul
 
   else{
     int j = particulas % procesos;
-    int particulas_corregidas = particulas - j;
+
 
     for(int i =0; i<n ; i++){
       arreglo_particulas[i] = procesos;
@@ -148,14 +136,11 @@ void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particul
 }
 
 
-
-
 //Entrada: Nombre de un archivo como Char*
 //Funcionamiento: Lee un archivo de entrada y guarda las energias de cada impacto   
 //Salida: Arreglo de enteros 
 
 void lectura(int * arregloEn, int * arregloPos, char * nombreEntrada, int pos_inicial,int pos_final){
-    int auxiliarPos;
 
     //Lectura del archivo
     FILE * archivoEntrada = fopen(nombreEntrada, "r");
@@ -188,7 +173,6 @@ float impacto(float energiaInicial, int energiaParticula, int cantidadCeldas, in
 
 void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int cantidadCeldas, int diferencia,char * nombreSalida){
 
-    char* salida;
     float energiaInicial;
     float newEnergia;
     for (int i = 0; i < diferencia; i++)
