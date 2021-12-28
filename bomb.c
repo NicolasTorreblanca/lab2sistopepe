@@ -14,6 +14,8 @@
 
 int main(int argc, char *argv[]){
 
+  //Primero se procesa el string que se recibe de entrada
+
   const char s[2] = " ";
   char *entrada= strtok(argv[0],s);
 
@@ -25,8 +27,7 @@ int main(int argc, char *argv[]){
   char sup_str[25];
   char iter_in[25];  
 
-
-  printf("xd\n");
+  //Para ello de divide cada elemento del string y se almacena en variables
 
   while( entrada != NULL ) {
       
@@ -56,24 +57,33 @@ int main(int argc, char *argv[]){
       entrada = strtok(NULL, s);   
   }
 
-
   int cantidadCeldas = atoi(celdas);
   int superior = atoi(sup_str);
   int inferior = atoi(ant_str);
   int iteracion = atoi(iter_in);
   int diferencia = superior - inferior;
 
+  //Se declaran los arreglos de memoria dinamica
+
   float * arregloCeldas = (float*)malloc(cantidadCeldas*sizeof(float));
-  
   int * arregloPos = (int*)malloc(diferencia*sizeof(int));
-  
-  int * arregloEn = (int*)malloc(diferencia*sizeof(int));  
+  int * arregloEn = (int*)malloc(diferencia*sizeof(int)); 
+
+  //Se realiza la lectura del archivo de las particulas
+  //Sirve para llenar los arreglos de energia y posiciones 
 
   lectura(arregloEn,arregloPos,nombreEntrada,inferior,superior);
 
+  //Con estos arreglos se puede calcular el bombardeo con las 
+  //Particulas especificas
+  //Se escribe un archivo de escritura parcial
+  //Donde se indica cual es el resultado que se obtuvo usando 
+
   bombardeo(arregloCeldas, arregloPos, arregloEn, cantidadCeldas,diferencia,nombre_salida); 
 
-  printf("fin escritura \n");
+  //Se genera un String que sera escrito por el hijo en el pipe 
+  // que lo conecta con el padre
+
   char iter[12];
   sprintf(iter, " %d",iteracion);
 
@@ -82,13 +92,17 @@ int main(int argc, char *argv[]){
   strcpy(salida,nombre_salida);
   strcat(salida,iter);
 
-  printf("nombre_salida : %s \n",salida);  
+  //Se escribe en el pipe
 
   write(STDOUT_FILENO,salida, 100); 
+
+  //Se libera la memoria dinamica
 
   free(arregloCeldas);
   free(arregloPos);
   free(arregloEn);
+
+  //Termina este proceso hijo
 
   return 0;
 

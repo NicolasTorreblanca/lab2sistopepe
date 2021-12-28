@@ -52,15 +52,12 @@ int main(int argc, char ** argv){
         {
         case 'N':
             sscanf(optarg, "%d", &cantidadCeldas);
-            printf("cantidadCeldas: %d\n", cantidadCeldas);
             break;
         case 'p':
             sscanf(optarg, "%d", &cantidadProcesos);
-            printf("cantidadProcesos: %d\n", cantidadProcesos);
             break;
         case 'c':
             sscanf(optarg, "%d", &cantidadParticulas);
-            printf("cantidadParticulas: %d\n", cantidadParticulas);
             break;    
         case 'i':
             nombreEntrada = optarg;
@@ -98,24 +95,27 @@ int main(int argc, char ** argv){
 
     //Se obtiene la cantidad de particulas en el archivo de entrada
     //int cantidadParticulas = lecturaCan(nombreEntrada);
-
     //Se reserva memoria para los arreglos dinamicos
     float * arregloCeldas = (float*)malloc(cantidadCeldas*sizeof(float));
     int * arregloPos = (int*)malloc(cantidadParticulas*sizeof(int));
     int * arregloEn = (int*)malloc(cantidadParticulas*sizeof(int));
+
+    //Se calcula la cantidad de hijos que se tienen que generar
+
     int n  = calcular_N(cantidadParticulas,cantidadProcesos);
     int * arreglo = (int*)malloc(n*sizeof(int));
+
+    //Se le asigna a cada hijo una cantidad de particulas
 
     asignar_Particulas(cantidadParticulas,cantidadProcesos,n,arreglo);
   
 
     int status;
-
     int proceso_hijo = 0;
-    int proceso_padre = 0;
-
+    int proceso_padre = 1;
     int posterior = 0;
     int anterior = 0;
+    int escrito = 0;
     int pid1 = -1;
 
 
@@ -123,6 +123,10 @@ int main(int argc, char ** argv){
       int * pipesPH = (int*)malloc(sizeof(int)*2); 
       int * pipesHP = (int*)malloc(sizeof(int)*2);
       char aux[125];
+
+      //Se declaran 2 pipes
+      //Uno es de padre Hijo, donde el padre escribe y el hijo Lee
+      //El otro es un Pipe donde el hijo escribe y el padre Lee
 
       pipe(pipesPH);
       pipe(pipesHP);
@@ -138,10 +142,13 @@ int main(int argc, char ** argv){
       {
           //Se entra en el proceso hijo
 
-          proceso_hijo = proceso_hijo +1;
+          proceso_padre = proceso_padre +1;
 
           close(pipesPH[ESCRITURA]);
           close(pipesHP[LECTURA]);
+
+          //Se reciben los parametros del padre a traves del pipe
+
           read(pipesPH[LECTURA],aux,sizeof(aux));
 
           //Se crea el String con parametros para el exec
@@ -164,25 +171,36 @@ int main(int argc, char ** argv){
 
           printf("Se entrego :%s \n",args[0]);
 
+
+          //Se ingresa al exec con el string que posee 
+          //los parametros de entrada para el funcionamiento
+
           dup2(pipesHP[ESCRITURA],STDOUT_FILENO);
           execvp("./bomb",args);
+
+          //Se escribe lo que se obtiene en el padre
 
           printf(" exec fallo \n");
           perror("exec ls failed");
           exit(EXIT_FAILURE);
 
+          //Se libera el pipe
+
           free(pipesHP);
           break;
 
       }else{
-          proceso_padre = proceso_padre + 1;
-
+          //Proceso padre
+          proceso_hijo = proceso_hijo + 1;
           char bufferHP[100];      
+
+          //Primero se calcula en donde tiene que trabajar el hijo
 
           posterior = avance(arreglo,i+1);
           anterior = avance(arreglo,i);
 
-                
+          //Se escribe un string que sirven de parametros para el hijo
+
           char ant_str[12];
           sprintf(ant_str, "%d", anterior);
           char post_str[12];
@@ -197,6 +215,8 @@ int main(int argc, char ** argv){
 
           close(pipesPH[LECTURA]);
           close(pipesHP[ESCRITURA]);
+
+          //Se comunica al hijo mediante un pipe los parametros
           
           write(pipesPH[ESCRITURA], aux,sizeof(aux));
 
@@ -204,21 +224,26 @@ int main(int argc, char ** argv){
           
           read(pipesHP[LECTURA], bufferHP, 100);
 
+          //Se pasa a traves del pipe
+          //El padre lee lo que el hijo escribe
+
           printf("Mi hijo escribio: %s\n", bufferHP);
   
           int auxiliarPos;
           float* futuro = (float*)malloc(cantidadCeldas* sizeof(float));
 
+          //Se procesa el string que se recibe
+
           const char s[2] = " ";
           char*inicial = strtok(bufferHP,s);
           int i = 0;
-          char nombreEntrada[25];
+          char archivoEscrito[25];
           char iters[25];
-
+        
           while( inicial != NULL ) {
               
               if(i == 0){
-                strcpy(nombreEntrada,inicial);   
+                strcpy(archivoEscrito,inicial);   
                 i = i+1;    
               }
               else if(i == 1){
@@ -230,22 +255,24 @@ int main(int argc, char ** argv){
 
             int iteracion = atoi(iters);
 
-
-
             //Lectura del archivo
-            FILE * archivoEntrada = fopen(nombreEntrada, "r");
-            if (archivoEntrada == NULL)
+            //Se busca leer lo que escribio el archivo hijo
+
+            FILE * archivoEntrante = fopen(archivoEscrito, "r");
+            if (archivoEntrante == NULL)
             {
                 perror("\nArchivo No Existente\n");
             }else{
                 for (int i = 0; i < cantidadCeldas; i++)
                   {
-                      fscanf(archivoEntrada, "%d", &auxiliarPos);
-                      fscanf(archivoEntrada, "%f", &futuro[i]);
+                      fscanf(archivoEntrante, "%d", &auxiliarPos);
+                      fscanf(archivoEntrante, "%f", &futuro[i]);
                       
                   }
-              fclose(archivoEntrada);
+              fclose(archivoEntrante);
             }
+
+            //Se suma lo escrito por el hijo a lo escrito por los demas hijos
 
             for(int j = 0; j < cantidadCeldas;j++){
                 arregloCeldas[j] = arregloCeldas[j] + futuro[j];
@@ -253,13 +280,16 @@ int main(int argc, char ** argv){
 
             free(futuro);
 
+            //Si se llega al final de la iteracion, se escribe el archivo de salida
+
             if(iteracion+1 == n){
               escritura_Final(arregloCeldas,cantidadCeldas,nombreSalida);
+              escrito = 1;
             }
                 
             free(pipesPH);
           }
-          printf("\nPP : %d , PH : %d\n",proceso_padre,proceso_hijo);
+          printf("\nProcesos hijo : %d , Procesos padre : %d\n",proceso_hijo,proceso_padre);
         }
 
 
@@ -270,6 +300,12 @@ int main(int argc, char ** argv){
         //Se utiliza la funcion niceprint si la bandera -D es utilizada en el comando de ejecucion
         if(bandera == 1){
             niceprint(cantidadCeldas, arregloCeldas, arregloCeldas[posMax]);
+        }
+
+        //En caso de no existir una salida, se escribe una
+
+        if(escrito != 1){
+          escritura_Final(arregloCeldas,cantidadCeldas,nombreSalida);
         }
 
     //Liberacion de memoria

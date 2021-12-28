@@ -7,67 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-//----DEFINICION DE FUNCIONES----
+//----------DEFINICION DE FUNCIONES--------------
 
-
-//Entrada: FLOAT ** X INT X CHAR*
-//Funcionamiento: Actualiza el valor de un determinado arreglo en base a lo leido en un archivo 
-//Salida: Arreglo de arreglo de flotantes
-
-void actualizar_Arreglo(float* parcial,int cantidadCeldas,char * entrada, int n,char* nombreSalida){
-
-  int auxiliarPos;
-  float* futuro = (float*)malloc(cantidadCeldas* sizeof(float));
-
-  const char s[2] = " ";
-  char*inicial = strtok(entrada,s);
-  int i = 0;
-  char nombreEntrada[25];
-  char iter[25];
-
-  while( entrada != NULL ) {
-      
-      if(i == 0){
-        strcpy(nombreEntrada,inicial);   
-        i = i+1;    
-      }
-      else if(i == 1){
-        strcpy(iter,inicial);    
-        i = i+1;    
-      }
-      inicial = strtok(NULL, s);   
-  }
-
-  int iteracion = atoi(iter);
-
-
-
-  //Lectura del archivo
-  FILE * archivoEntrada = fopen(nombreEntrada, "r");
-  if (archivoEntrada == NULL)
-  {
-      perror("\nArchivo No Existente\n");
-  }else{
-      for (int i = 0; i < cantidadCeldas; i++)
-        {
-            fscanf(archivoEntrada, "%d", &auxiliarPos);
-            fscanf(archivoEntrada, "%f", &futuro[i]);
-            
-        }
-    fclose(archivoEntrada);
-  }
-
-  for(int j = 0; j < cantidadCeldas;j++){
-      parcial[j] = futuro[j] + parcial[j];
-  }
-
-  if(iteracion+1 == n){
-      escritura_Final(parcial,cantidadCeldas,nombreSalida);
-  }
- 
-  free(futuro);
-
-}
 
 //Entrada: Int x Int
 //Funcionamiento: Permite calcular el N(cantidad total de hijos) que tendra el programa   
@@ -102,7 +43,7 @@ int avance(int* arreglo,int posicion_final){
 
 //Entrada:INT X INT X INT X INT*
 //Funcionamiento: Realiza asignaciones de procesos para cada particula 
-//Salida: 
+//Salida: Actualiza un arreglo, donde asigna la cantidad de particulas que recibira cada proceso.
 
 
 void asignar_Particulas(int particulas,int procesos,int n, int* arreglo_particulas){
@@ -190,6 +131,10 @@ void bombardeo(float * arregloCeldas, int * arregloPos, int * arregloEn, int can
     }
     escritura_Parcial(arregloCeldas,cantidadCeldas,nombreSalida);
 }
+
+//Entrada: Float* X INT* X INT * x INT X INT X CHAR*
+//Funcionamiento: Calcula los efectos de cada bombardeo en las celdas y entrega un archivo de salida con los resultados finales
+//Salida: Archivo de salida con el resultado trabajado por el arreglo en determinadas celdas
 
 void escritura_Parcial(float * arregloCeldas, int cantidadCeldas,char * nombreSalida){
 	FILE * archivoSalida = fopen(nombreSalida, "w");
